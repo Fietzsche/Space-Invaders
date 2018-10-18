@@ -7,6 +7,8 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.title("Space Invaders")
 
+running = True
+
 
 points = 0
 
@@ -58,8 +60,7 @@ for enemy in enemies:
 	else:
 		enemy.setposition(enemyX, enemyY)
 		enemyX += 100
-	print(enemy.xcor())
-enemySpeed = 10
+enemySpeed = 15
 
 #Create bullet
 bullet = turtle.Turtle()
@@ -74,6 +75,16 @@ bullet.hideturtle()
 bulletSpeed = 20
 
 bulletState = "ready"
+
+#Create enemy bullet
+eBullet = turtle.Turtle()
+eBullet.color("green")
+eBullet.shape("triangle")
+eBullet.penup()
+eBullet.speed(0)
+eBullet.setheading(360)
+eBullet.shapesize(0.5, 0.5)
+eBullet.hideturtle()
 
 def move_left():
 	x = player.xcor()
@@ -105,12 +116,6 @@ def isCollision(t1, t2):
 	else:
 		return False
 
-	#Update points
-	points += 10
-	pointString = "Points: %s" %points
-	pointBox.clear()
-	pointBox.write(pointString, False, align = "left", font = ("Arial",14,"normal"))
-
 
 
 # Key Bindings
@@ -119,7 +124,7 @@ turtle.onkey(move_left, "Left")
 turtle.onkey(move_right, "Right")
 turtle.onkey(fire_bullet, "space")
 
-while True:
+while running:
 
 	#Move Enemies
 	for enemy in enemies:
@@ -142,14 +147,7 @@ while True:
 				y -= 40
 				e.sety(y)
 				if s == 7 or s == 13 or s == 19:
-					print("yes ")
 					e.setx(sxCor)
-					#sxCor -= 3
-					#if t != 3:
-						#t += 1
-					#else:
-						#t = 0
-						#sxCor -= 10
 			enemySpeed *= -1
 
 		#move bullet
@@ -168,9 +166,18 @@ while True:
 				bullet.setposition(0, -400)
 
 				enemy.hideturtle()
-				enemy.setposition(0, 500)
+				enemy.setposition(0, -500)
 
-		if isCollision(player, enemy) or enemy.ycor() < -250:
+				#Update points
+				points += 10
+				print(points)
+				pointString = "Points: %s" %points
+				pointBox.clear()
+				pointBox.write(pointString, False, align = "left", font = ("Arial",14,"normal"))
+
+		if isCollision(player, enemy) or (enemy.ycor() < -250 and enemy.ycor() > -500):
 			print ("Game Over")
+			running = False
+			break
 
 delay = input("Press Enter to Continue")
