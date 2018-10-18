@@ -7,6 +7,12 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.title("Space Invaders")
 
+#pointBox = turtle.Turtle()
+#pointBox.color("white")
+#pointBox.shape("square")
+#pointBox.write("hello", align = "left")
+
+points = 0
 
 
 # Player Creation
@@ -20,7 +26,7 @@ player.setheading(90)
 
 playerSpeed = 15
 
-enemyNo = 23
+enemyNo = 20
 
 enemies = []
 
@@ -36,16 +42,16 @@ for enemy in enemies:
 	enemy.penup()
 	enemy.speed(0)
 
-	enemyX += 100
 
-	if enemyX > 280:
+	if enemyX > 249 or enemyX < -280:
+		enemy.setposition(enemyX, enemyY)
 		enemyX = -250
 		enemyY -= 40
-		enemy.setposition(enemyX, enemyY)
 	else:
 		enemy.setposition(enemyX, enemyY)
+		enemyX += 100
 
-enemySpeed = 5
+enemySpeed = 10
 
 #Create bullet
 bullet = turtle.Turtle()
@@ -100,11 +106,14 @@ turtle.onkey(fire_bullet, "space")
 
 while True:
 
+	s = 0
+
 	#Move Enemies
 	for enemy in enemies:
 		x = enemy.xcor()
 		x += enemySpeed
 		enemy.setx(x)
+		s += 1
 
 		if enemy.xcor() > 280:
 			for enemy in enemies:
@@ -136,10 +145,10 @@ while True:
 				bullet.setposition(0, -400)
 
 				enemy.hideturtle()
-				enemy.setposition(0, -500)
+				enemy.setposition(0, 500)
+				points += 100
 
-		if isCollision(player, enemy):
+		if isCollision(player, enemy) or enemy.ycor() < -250:
 			print ("Game Over")
-			break
 
 delay = input("Press Enter to Continue")
