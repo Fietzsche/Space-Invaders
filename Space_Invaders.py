@@ -7,12 +7,17 @@ screen = turtle.Screen()
 screen.bgcolor("black")
 screen.title("Space Invaders")
 
-#pointBox = turtle.Turtle()
-#pointBox.color("white")
-#pointBox.shape("square")
-#pointBox.write("hello", align = "left")
 
 points = 0
+
+pointBox = turtle.Turtle()
+pointBox.speed(0)
+pointBox.color("white")
+pointBox.penup()
+pointBox.setposition(-290, 260)
+pointString = "Points: %s" %points
+pointBox.write(pointString, False, align = "left", font = ("Arial",14,"normal"))
+pointBox.hideturtle()
 
 
 # Player Creation
@@ -26,12 +31,15 @@ player.setheading(90)
 
 playerSpeed = 15
 
-enemyNo = 20
+enemyNo = 24
 
 enemies = []
 
 enemyX = -250
 enemyY = 250
+
+s = 0
+sxCor = -263
 
 for i in range(enemyNo):
 	enemies.append(turtle.Turtle())
@@ -50,7 +58,7 @@ for enemy in enemies:
 	else:
 		enemy.setposition(enemyX, enemyY)
 		enemyX += 100
-
+	print(enemy.xcor())
 enemySpeed = 10
 
 #Create bullet
@@ -97,6 +105,13 @@ def isCollision(t1, t2):
 	else:
 		return False
 
+	#Update points
+	points += 10
+	pointString = "Points: %s" %points
+	pointBox.clear()
+	pointBox.write(pointString, False, align = "left", font = ("Arial",14,"normal"))
+
+
 
 # Key Bindings
 turtle.listen()
@@ -106,27 +121,35 @@ turtle.onkey(fire_bullet, "space")
 
 while True:
 
-	s = 0
-
 	#Move Enemies
 	for enemy in enemies:
 		x = enemy.xcor()
 		x += enemySpeed
 		enemy.setx(x)
-		s += 1
 
 		if enemy.xcor() > 280:
-			for enemy in enemies:
-				y = enemy.ycor()
+			for e in enemies:
+				y = e.ycor()
 				y -= 40
-				enemy.sety(y)
+				e.sety(y)
 			enemySpeed *= -1
 
 		if enemy.xcor() < -280:
-			for enemy in enemies:
-				y = enemy.ycor()
+			s = 0
+			for e in enemies:
+				s += 1
+				y = e.ycor()
 				y -= 40
-				enemy.sety(y)
+				e.sety(y)
+				if s == 7 or s == 13 or s == 19:
+					print("yes ")
+					e.setx(sxCor)
+					#sxCor -= 3
+					#if t != 3:
+						#t += 1
+					#else:
+						#t = 0
+						#sxCor -= 10
 			enemySpeed *= -1
 
 		#move bullet
@@ -146,7 +169,6 @@ while True:
 
 				enemy.hideturtle()
 				enemy.setposition(0, 500)
-				points += 100
 
 		if isCollision(player, enemy) or enemy.ycor() < -250:
 			print ("Game Over")
